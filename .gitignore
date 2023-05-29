@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+pgdata
+.yarn
+uploads/*
+download/templates/*
+download/users/*
+download/files/*

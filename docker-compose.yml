@@ -1,0 +1,62 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: mongo
+    image: mongo:latest
+    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_DATABASE}
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - app
+
+  db_test:
+    container_name: mongo_teste
+    image: mongo:latest
+    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_DATABASE}
+    ports:
+      - '27018:27017'
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./pgdatateste:/var/lib/postgresql/data
+    networks:
+      - app
+
+  # api:
+  #   container_name: api
+  #   links:
+  #     - db
+  #   depends_on:
+  #     - db
+  #   build:
+  #     context: .
+  #     dockerfile: ./DockerfileDev
+  #   ports:
+  #     - 3001:3001
+  #   env_file: .env
+  #   environment:
+  #     - DB_HOST=db
+  #     - DB_PORT=${DB_PORT}
+  #     - DB_USER=${DB_USER}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - DB_DATABASE=${DB_DATABASE}
+  #   volumes:
+  #     - ./src:/usr/app/src
+  #   networks:
+  #     - app
+  #   restart: unless-stopped
+
+networks:
+  app:
+    driver: bridge
